@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🤬 Gaali Fine Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: #2a2a40;
+    --accent: #ff3c5a;
+    --accent2: #ff8c00;
+    --accent3: #00e5ff;
+    --text: #e8e8f0;
+    --text-dim: #888899;
+    --green: #00ff88;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    background-image: 
+      radial-gradient(ellipse at 20% 50%, rgba(255,60,90,0.05) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(0,229,255,0.05) 0%, transparent 50%);
+  }
+
+  header {
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(10,10,15,0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .logo span { color: var(--accent3); -webkit-text-fill-color: var(--accent3); }
+
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: var(--surface);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+
+  .tab-btn {
+    padding: 8px 24px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--text-dim);
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active {
+    background: linear-gradient(135deg, var(--accent), #c0002a);
+    color: white;
+    box-shadow: 0 0 20px rgba(255,60,90,0.3);
+  }
+
+  .tab-content { display: none; padding: 32px; }
+  .tab-content.active { display: block; }
+
+  /* OVERVIEW */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+  }
+
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .stat-card.red::before { background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+  .stat-card.blue::before { background: linear-gradient(90deg, var(--accent3), #0080ff); }
+  .stat-card.green::before { background: linear-gradient(90deg, var(--green), #00cc66); }
+
+  .stat-card:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
+
+  .stat-label {
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    line-height: 1;
+    letter-spacing: 2px;
+  }
+
+  .stat-value.red { color: var(--accent); }
+  .stat-value.blue { color: var(--accent3); }
+  .stat-value.green { color: var(--green); }
+
+  .stat-sub {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    letter-spacing: 3px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+
+  .leaderboard, .trending-gaali {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .lb-row {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+    transition: background 0.2s;
+  }
+
+  .lb-row:last-child { border-bottom: none; }
+
+  .lb-rank {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    width: 32px;
+    text-align: center;
+  }
+
+  .lb-rank.gold { color: #ffd700; }
+  .lb-rank.silver { color: #c0c0c0; }
+  .lb-rank.bronze { color: #cd7f32; }
+  .lb-rank.other { color: var(--text-dim); }
+
+  .lb-name { flex: 1; font-size: 1.1rem; font-weight: 600; }
+
+  .lb-count {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .lb-amount {
+    font-weight: 700;
+    color: var(--green);
+    min-width: 60px;
+    text-align: right;
+  }
+
+  .gaali-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    margin: 6px 4px;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .gaali-pill .count {
+    background: var(--accent);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+  }
+
+  .log-table {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .log-table table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .log-table th {
+    background: var(--surface2);
+    padding: 14px 20px;
+    text-align: left;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 600;
+  }
+
+  .log-table td {
+    padding: 14px 20px;
+    border-top: 1px solid var(--border);
+    font-size: 0.95rem;
+  }
+
+  .log-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+  }
+
+  .badge-gaali {
+    background: rgba(255,60,90,0.15);
+    color: var(--accent);
+    border: 1px solid rgba(255,60,90,0.3);
+  }
+
+  /* ADMIN */
+  .admin-lock {
+    max-width: 400px;
+    margin: 80px auto;
+    text-align: center;
+  }
+
+  .lock-icon {
+    font-size: 4rem;
+    margin-bottom: 16px;
+    display: block;
+    filter: drop-shadow(0 0 20px rgba(255,60,90,0.5));
+  }
+
+  .admin-lock h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    margin-bottom: 8px;
+    color: var(--accent);
+  }
+
+  .admin-lock p { color: var(--text-dim); margin-bottom: 24px; }
+
+  .input-group { position: relative; margin-bottom: 16px; }
+
+  .input-group input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .input-group input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(255,60,90,0.1);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 28px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #c0002a);
+    color: white;
+    width: 100%;
+    justify-content: center;
+    box-shadow: 0 4px 20px rgba(255,60,90,0.3);
+  }
+
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 25px rgba(255,60,90,0.4); }
+
+  .btn-success {
+    background: linear-gradient(135deg, var(--green), #00cc66);
+    color: #0a0a0f;
+  }
+
+  .btn-success:hover { transform: translateY(-1px); }
+
+  .btn-danger {
+    background: rgba(255,60,90,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(255,60,90,0.3);
+    padding: 6px 12px;
+    font-size: 0.85rem;
+  }
+
+  .btn-danger:hover { background: rgba(255,60,90,0.2); }
+
+  .admin-panel { max-width: 900px; margin: 0 auto; }
+
+  .admin-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+  }
+
+  .admin-header h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    color: var(--accent);
+  }
+
+  .btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    background: var(--surface);
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-weight: 600;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+
+  .btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+
+  .admin-sections { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+
+  .admin-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+  }
+
+  .admin-card h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    color: var(--accent3);
+  }
+
+  select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888899' stroke-width='2' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    cursor: pointer;
+    margin-bottom: 12px;
+    transition: border-color 0.2s;
+  }
+
+  select:focus { border-color: var(--accent); }
+
+  .form-label {
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    display: block;
+    font-weight: 600;
+  }
+
+  .form-group { margin-bottom: 16px; }
+
+  .delete-row {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 12px;
+    font-size: 0.95rem;
+  }
+
+  .delete-row:last-child { border-bottom: none; }
+  .delete-row .name { font-weight: 600; flex: 1; }
+  .delete-row .gaali { color: var(--accent); font-weight: 700; flex: 1; }
+  .delete-row .amt { color: var(--green); font-weight: 600; }
+  .delete-row .date { color: var(--text-dim); font-size: 0.8rem; flex: 1; }
+
+  .delete-list { max-height: 350px; overflow-y: auto; margin-bottom: 16px; }
+  .delete-list::-webkit-scrollbar { width: 4px; }
+  .delete-list::-webkit-scrollbar-track { background: var(--surface2); }
+  .delete-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .error-msg {
+    color: var(--accent);
+    font-size: 0.9rem;
+    margin-top: 8px;
+    display: none;
+  }
+
+  .success-toast {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    background: var(--green);
+    color: #0a0a0f;
+    padding: 14px 24px;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s;
+    z-index: 999;
+  }
+
+  .success-toast.show { transform: translateY(0); opacity: 1; }
+
+  .empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-dim);
+  }
+
+  .empty-state .emoji { font-size: 3rem; display: block; margin-bottom: 12px; }
+
+  @media (max-width: 768px) {
+    .stats-grid { grid-template-columns: 1fr; }
+    .two-col { grid-template-columns: 1fr; }
+    .admin-sections { grid-template-columns: 1fr; }
+    header { padding: 16px; flex-direction: column; gap: 12px; }
+    .tab-content { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🤬 Gaali<span>Meter</span></div>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('overview')">📊 Overview</button>
+    <button class="tab-btn" onclick="switchTab('admin')">🔐 Admin</button>
+  </div>
+</header>
+
+<!-- OVERVIEW TAB -->
+<div id="tab-overview" class="tab-content active">
+  <div class="stats-grid">
+    <div class="stat-card red">
+      <div class="stat-label">Total Collection</div>
+      <div class="stat-value red" id="total-collection">₹0</div>
+      <div class="stat-sub">Fine collected so far</div>
+    </div>
+    <div class="stat-card blue">
+      <div class="stat-label">Total Gaalis</div>
+      <div class="stat-value blue" id="total-gaalis">0</div>
+      <div class="stat-sub">Curses unleashed</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Top Scorer</div>
+      <div class="stat-value green" id="top-scorer" style="font-size:1.8rem">—</div>
+      <div class="stat-sub" id="top-scorer-sub">Most fined member</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="leaderboard">
+      <div class="section-title">🏆 Leaderboard</div>
+      <div id="leaderboard-list"></div>
+    </div>
+    <div class="trending-gaali">
+      <div class="section-title">🔥 Trending Gaali</div>
+      <div id="trending-list"></div>
+    </div>
+  </div>
+
+  <div class="section-title">📋 Recent Log</div>
+  <div class="log-table">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Gaali</th>
+          <th>Fine</th>
+          <th>Date</th>
+        </tr>
+      </thead>
+      <tbody id="log-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- ADMIN TAB -->
+<div id="tab-admin" class="tab-content">
+  <!-- Login Screen -->
+  <div id="admin-login">
+    <div class="admin-lock">
+      <span class="lock-icon">🔒</span>
+      <h2>Admin Access</h2>
+      <p>Enter the secret password to manage entries</p>
+      <div class="input-group">
+        <input type="password" id="pwd-input" placeholder="Password" onkeypress="if(event.key==='Enter') doLogin()">
+      </div>
+      <div class="error-msg" id="login-error">❌ Wrong password, chal hat!</div>
+      <button class="btn btn-primary" onclick="doLogin()">🔓 Unlock</button>
+    </div>
+  </div>
+
+  <!-- Admin Panel -->
+  <div id="admin-panel" style="display:none;">
+    <div class="admin-panel">
+      <div class="admin-header">
+        <h2>🛠️ Admin Panel</h2>
+        <button class="btn-sm" onclick="doLogout()">🔒 Logout</button>
+      </div>
+
+      <div class="admin-sections">
+        <!-- Add Entry -->
+        <div class="admin-card">
+          <h3>➕ Add Entry</h3>
+          <div class="form-group">
+            <label class="form-label">Kaun tha?</label>
+            <select id="add-name">
+              <option value="">-- Select Name --</option>
+              <option>Anuj</option>
+              <option>Prashant</option>
+              <option>Ayushi</option>
+              <option>Aadarsh</option>
+              <option>Neetu</option>
+              <option>Aryan</option>
+              <option>Aastha</option>
+              <option>Abhijeet</option>
+              <option>Parth</option>
+              <option>Sneha</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Kya bola?</label>
+            <select id="add-gaali">
+              <option value="">-- Select Gaali --</option>
+              <option>B</option>
+              <option>MC</option>
+              <option>BC</option>
+              <option>BSDK</option>
+              <option>GMD</option>
+              <option>G</option>
+              <option>LL</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Fine Amount</label>
+            <select id="add-price">
+              <option value="">-- Select Fine --</option>
+              <option value="20">₹20</option>
+              <option value="50">₹50</option>
+              <option value="100">₹100</option>
+            </select>
+          </div>
+          <div class="error-msg" id="add-error">Please fill all fields!</div>
+          <button class="btn btn-success" onclick="addEntry()" style="width:100%; justify-content:center;">✅ Add Entry</button>
+        </div>
+
+        <!-- Delete Entry -->
+        <div class="admin-card">
+          <h3>🗑️ Delete Entries</h3>
+          <div class="delete-list" id="delete-list"></div>
+          <button class="btn btn-primary" onclick="saveDeletes()" style="width:100%; justify-content:center;">💾 Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="success-toast" id="toast"></div>
+
+<script>
+  // ---- DATA ----
+  const PASS = 'Sneha@gaali';
+  let pendingDeletes = new Set();
+
+  function loadData() {
+    try { return JSON.parse(localStorage.getItem('gaali_data') || '[]'); }
+    catch(e) { return []; }
+  }
+
+  function saveData(d) {
+    localStorage.setItem('gaali_data', JSON.stringify(d));
+  }
+
+  // ---- TABS ----
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    event.target.classList.add('active');
+    if (tab === 'overview') renderOverview();
+    if (tab === 'admin' && document.getElementById('admin-panel').style.display !== 'none') renderDeleteList();
+  }
+
+  // ---- LOGIN ----
+  function doLogin() {
+    const val = document.getElementById('pwd-input').value;
+    const err = document.getElementById('login-error');
+    if (val === PASS) {
+      document.getElementById('admin-login').style.display = 'none';
+      document.getElementById('admin-panel').style.display = 'block';
+      renderDeleteList();
+      err.style.display = 'none';
+    } else {
+      err.style.display = 'block';
+      document.getElementById('pwd-input').value = '';
+      document.getElementById('pwd-input').style.borderColor = 'var(--accent)';
+      setTimeout(() => { document.getElementById('pwd-input').style.borderColor = ''; }, 1000);
+    }
+  }
+
+  function doLogout() {
+    document.getElementById('admin-login').style.display = 'block';
+    document.getElementById('admin-panel').style.display = 'none';
+    document.getElementById('pwd-input').value = '';
+    pendingDeletes.clear();
+  }
+
+  // ---- ADD ENTRY ----
+  function addEntry() {
+    const name = document.getElementById('add-name').value;
+    const gaali = document.getElementById('add-gaali').value;
+    const price = document.getElementById('add-price').value;
+    const err = document.getElementById('add-error');
+
+    if (!name || !gaali || !price) { err.style.display = 'block'; return; }
+    err.style.display = 'none';
+
+    const data = loadData();
+    data.push({
+      id: Date.now(),
+      name, gaali,
+      price: parseInt(price),
+      date: new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'2-digit' })
+    });
+    saveData(data);
+
+    document.getElementById('add-name').value = '';
+    document.getElementById('add-gaali').value = '';
+    document.getElementById('add-price').value = '';
+
+    renderDeleteList();
+    showToast('✅ Entry added! ' + name + ' ne "' + gaali + '" bola 😤');
+  }
+
+  // ---- DELETE ----
+  function renderDeleteList() {
+    const data = loadData();
+    const list = document.getElementById('delete-list');
+    pendingDeletes.clear();
+
+    if (data.length === 0) {
+      list.innerHTML = '<div class="empty-state"><span class="emoji">😇</span>No entries yet! Sab seedha hai abhi.</div>';
+      return;
+    }
+
+    list.innerHTML = data.slice().reverse().map(entry => `
+      <div class="delete-row" id="row-${entry.id}">
+        <span class="name">${entry.name}</span>
+        <span class="gaali">${entry.gaali}</span>
+        <span class="amt">₹${entry.price}</span>
+        <span class="date">${entry.date}</span>
+        <button class="btn btn-danger" onclick="toggleDelete(${entry.id}, this)">✕</button>
+      </div>
+    `).join('');
+  }
+
+  function toggleDelete(id, btn) {
+    if (pendingDeletes.has(id)) {
+      pendingDeletes.delete(id);
+      btn.closest('.delete-row').style.opacity = '1';
+      btn.closest('.delete-row').style.textDecoration = 'none';
+      btn.style.background = 'rgba(255,60,90,0.1)';
+    } else {
+      pendingDeletes.add(id);
+      btn.closest('.delete-row').style.opacity = '0.4';
+      btn.closest('.delete-row').style.textDecoration = 'line-through';
+      btn.style.background = 'rgba(255,60,90,0.4)';
+    }
+  }
+
+  function saveDeletes() {
+    if (pendingDeletes.size === 0) { showToast('Nothing to delete!'); return; }
+    const data = loadData().filter(e => !pendingDeletes.has(e.id));
+    saveData(data);
+    pendingDeletes.clear();
+    renderDeleteList();
+    renderOverview();
+    showToast('🗑️ ' + pendingDeletes.size + ' entries deleted!');
+  }
+
+  // ---- OVERVIEW ----
+  function renderOverview() {
+    const data = loadData();
+
+    // Stats
+    const total = data.reduce((s,e) => s + e.price, 0);
+    document.getElementById('total-collection').textContent = '₹' + total;
+    document.getElementById('total-gaalis').textContent = data.length;
+
+    // Leaderboard
+    const byName = {};
+    data.forEach(e => {
+      if (!byName[e.name]) byName[e.name] = { count: 0, amount: 0 };
+      byName[e.name].count++;
+      byName[e.name].amount += e.price;
+    });
+
+    const sorted = Object.entries(byName).sort((a, b) => b[1].amount - a[1].amount);
+
+    if (sorted.length > 0) {
+      document.getElementById('top-scorer').textContent = sorted[0][0];
+      document.getElementById('top-scorer-sub').textContent = '₹' + sorted[0][1].amount + ' fined (' + sorted[0][1].count + ' gaalis)';
+    } else {
+      document.getElementById('top-scorer').textContent = '—';
+      document.getElementById('top-scorer-sub').textContent = 'Most fined member';
+    }
+
+    const rankLabels = ['gold', 'silver', 'bronze'];
+    const lbEl = document.getElementById('leaderboard-list');
+    if (sorted.length === 0) {
+      lbEl.innerHTML = '<div class="empty-state"><span class="emoji">😇</span>No data yet!</div>';
+    } else {
+      lbEl.innerHTML = sorted.map(([name, stats], i) => `
+        <div class="lb-row">
+          <span class="lb-rank ${rankLabels[i] || 'other'}">${i + 1}</span>
+          <span class="lb-name">${name}</span>
+          <span class="lb-count">${stats.count}x</span>
+          <span class="lb-amount">₹${stats.amount}</span>
+        </div>
+      `).join('');
+    }
+
+    // Trending gaali
+    const byGaali = {};
+    data.forEach(e => {
+      byGaali[e.gaali] = (byGaali[e.gaali] || 0) + 1;
+    });
+    const sortedGaali = Object.entries(byGaali).sort((a, b) => b[1] - a[1]);
+    const trendEl = document.getElementById('trending-list');
+    if (sortedGaali.length === 0) {
+      trendEl.innerHTML = '<div class="empty-state"><span class="emoji">😇</span>Abhi kisi ne kuch nahi bola!</div>';
+    } else {
+      trendEl.innerHTML = sortedGaali.map(([gaali, count]) => `
+        <div class="gaali-pill">
+          <span>${gaali}</span>
+          <span class="count">${count}x</span>
+        </div>
+      `).join('');
+    }
+
+    // Log
+    const tbody = document.getElementById('log-tbody');
+    if (data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding:40px; color:var(--text-dim)">No entries yet 😇</td></tr>';
+    } else {
+      tbody.innerHTML = data.slice().reverse().map((e, i) => `
+        <tr>
+          <td style="color:var(--text-dim); font-size:0.85rem">${data.length - i}</td>
+          <td style="font-weight:600">${e.name}</td>
+          <td><span class="badge badge-gaali">${e.gaali}</span></td>
+          <td style="color:var(--green); font-weight:700">₹${e.price}</td>
+          <td style="color:var(--text-dim); font-size:0.85rem">${e.date}</td>
+        </tr>
+      `).join('');
+    }
+  }
+
+  // ---- TOAST ----
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3000);
+  }
+
+  // Init
+  renderOverview();
+</script>
+</body>
+</html>
